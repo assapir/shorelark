@@ -1,7 +1,7 @@
 use lib_simulation as sim;
 use rand::{prelude::ThreadRng, thread_rng};
-use wasm_bindgen::prelude::*;
 use serde::Serialize;
+use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub struct Simulation {
@@ -23,29 +23,25 @@ impl Simulation {
         let world = World::from(self.sim.world());
         JsValue::from_serde(&world).unwrap()
     }
+
+    pub fn step(&mut self) {
+        self.sim.step();
+    }
 }
 
 #[derive(Clone, Debug, Serialize)]
 pub struct World {
     pub animals: Vec<Animal>,
-}
-
-#[derive(Clone, Debug, Serialize)]
-pub struct Animal {
-    pub x: f32,
-    pub y: f32,
-    pub rotation: f32,
+    pub foods: Vec<Food>,
 }
 
 impl From<&sim::World> for World {
     fn from(world: &sim::World) -> Self {
-        let animals = world
-            .animals()
-            .iter()
-            .map(Animal::from)
-            .collect();
+        let animals = world.animals().iter().map(Animal::from).collect();
 
-        Self { animals }
+        let foods = world.foods().iter().map(Food::from).collect();
+
+        Self { animals, foods }
     }
 }
 
@@ -55,6 +51,28 @@ impl From<&sim::Animal> for Animal {
             x: animal.position().x,
             y: animal.position().y,
             rotation: animal.rotation().angle(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Animal {
+    pub x: f32,
+    pub y: f32,
+    pub rotation: f32,
+}
+
+#[derive(Clone, Debug, Serialize)]
+pub struct Food {
+    pub x: f32,
+    pub y: f32,
+}
+
+impl From<&sim::Food> for Food {
+    fn from(food: &sim::Food) -> Self {
+        Self {
+            x: food.position().x,
+            y: food.position().y,
         }
     }
 }

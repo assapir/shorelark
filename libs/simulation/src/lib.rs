@@ -1,6 +1,6 @@
-use na::{Point2, Rotation2};
 use nalgebra as na;
 use rand::{Rng, RngCore};
+use na::{Point2, Rotation2, Vector2};
 
 pub struct Simulation {
     world: World,
@@ -15,6 +15,15 @@ impl Simulation {
 
     pub fn world(&self) -> &World {
         &self.world
+    }
+
+    pub fn step(&mut self) {
+        for animal in &mut self.world.animals {
+            animal.position += animal.rotation * Vector2::new(animal.speed(), 0.0);
+
+            animal.position.x = na::wrap(animal.position.x, 0.0, 1.0);
+            animal.position.y = na::wrap(animal.position.y, 0.0, 1.0);
+        }
     }
 }
 
@@ -63,6 +72,10 @@ impl Animal {
 
     pub fn rotation(&self) -> Rotation2<f32> {
         self.rotation
+    }
+
+    pub fn speed(&self) -> f32 {
+        self.speed
     }
 }
 
