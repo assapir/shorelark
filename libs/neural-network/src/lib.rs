@@ -1,9 +1,11 @@
 use rand::Rng;
 
+#[derive(Debug)]
 pub struct LayerTopology {
     pub neurons: usize,
 }
 
+#[derive(Debug)]
 pub struct Network {
     layers: Vec<Layer>,
 }
@@ -30,6 +32,7 @@ impl Network {
     }
 }
 
+#[derive(Debug)]
 struct Layer {
     neurons: Vec<Neuron>,
 }
@@ -53,6 +56,7 @@ impl Layer {
     }
 }
 
+#[derive(Debug)]
 struct Neuron {
     bias: f32,
     weights: Vec<f32>,

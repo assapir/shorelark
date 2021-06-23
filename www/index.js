@@ -27,6 +27,8 @@ CanvasRenderingContext2D.prototype.drawTriangle = function (x, y, size, rotation
     );
     this.lineTo(newX,newY);
     this.stroke();
+    this.fillStyle = 'rgb(255, 255, 255)';
+    this.fill();
 };
 
 CanvasRenderingContext2D.prototype.drewCircle = function (x, y, radius) {
