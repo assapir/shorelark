@@ -79,7 +79,11 @@ where
 mod tests {
     use std::{collections::BTreeMap, iter::FromIterator};
 
-    use crate::{GeneticAlgorithm, chromosome::Chromosome, gaussian_mutation::GaussianMutation, roulette_wheel::RouletteWheelSelection, uniform_crossover::UniformCrossover};
+    use crate::{
+        chromosome::Chromosome, gaussian_mutation::GaussianMutation,
+        roulette_wheel::RouletteWheelSelection, uniform_crossover::UniformCrossover,
+        GeneticAlgorithm,
+    };
 
     use super::*;
     use rand::SeedableRng;
