@@ -14,10 +14,7 @@ use animal_individual::AnimalIndividual;
 pub use brain::Brain;
 pub use eye::Eye;
 pub use food::Food;
-use ga::{
-    gaussian_mutation::GaussianMutation, roulette_wheel::RouletteWheelSelection,
-    uniform_crossover::UniformCrossover, GeneticAlgorithm,
-};
+use ga::{GeneticAlgorithm, gaussian_mutation::GaussianMutation, roulette_wheel::RouletteWheelSelection, statistics::Statistics, uniform_crossover::UniformCrossover};
 use lib_genetic_algorithm as ga;
 use na::{Rotation2, Vector2};
 use nalgebra as na;
@@ -53,14 +50,24 @@ impl Simulation {
         &self.world
     }
 
-    pub fn step(&mut self, rng: &mut dyn RngCore) {
+    pub fn step(&mut self, rng: &mut dyn RngCore) -> Option<Statistics>{
         self.process_collisions(rng);
         self.process_brain();
         self.process_movement();
 
         self.age += 1;
         if self.age >= GENERATION_LENGTH {
-            self.evolve(rng);
+            Some(self.evolve(rng))
+        } else {
+            None
+        }
+    }
+
+    pub fn train(&mut self, rng: &mut dyn RngCore) -> Statistics{
+        loop {
+            if let Some(stat) = self.step(rng) {
+                return stat;
+            }
         }
     }
 
@@ -101,7 +108,7 @@ impl Simulation {
         }
     }
 
-    fn evolve(&mut self, rng: &mut dyn RngCore) {
+    fn evolve(&mut self, rng: &mut dyn RngCore) -> Statistics {
         self.age = 0;
         let current_population: Vec<AnimalIndividual> = self
             .world
@@ -110,14 +117,16 @@ impl Simulation {
             .map(AnimalIndividual::from_animal)
             .collect();
 
-        let evolved_population = self.ga.evolve(rng, &current_population);
+        let (evolved_population, stats)= self.ga.evolve(rng, &current_population);
         self.world.animals = evolved_population
             .into_iter()
             .map(|individual| individual.into_animal(rng))
             .collect();
 
         for food in &mut self.world.foods {
-            food.position = rng.gen();
-        }
+            food.position = rng.gen()
+        };
+
+        stats
     }
 }

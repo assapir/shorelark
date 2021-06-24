@@ -27,6 +27,19 @@ impl Simulation {
     pub fn step(&mut self) {
         self.sim.step(&mut self.rng);
     }
+
+    pub fn train(&mut self) -> String {
+        let stats = self.sim.train(&mut self.rng);
+
+        format!(
+"min = {:.2}
+max = {:.2}
+average = {:.2}",
+            stats.min_fitness(),
+            stats.max_fitness(),
+            stats.average_fitness()
+        )
+    }
 }
 
 #[derive(Clone, Debug, Serialize)]
